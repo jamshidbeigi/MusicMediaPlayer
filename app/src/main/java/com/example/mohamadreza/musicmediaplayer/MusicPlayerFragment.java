@@ -1,5 +1,6 @@
 package com.example.mohamadreza.musicmediaplayer;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,17 +21,27 @@ import java.util.concurrent.TimeUnit;
 
 public class MusicPlayerFragment extends Fragment {
 
-    private static final String DIALOG_TAG = "DialogDate";
     private RecyclerView mRecyclerView;
     private SoundAdapter mSoundAdapter;
     private MusicLab mMusicLab;
-    private SeekBar mSeekBar;
-    private Integer mRate;
-    private ImageView mPlay;
-    private ImageView mPrevious;
-    private ImageView mNext;
-    private ImageView mPause;
-    private TextView mTitle;
+
+    private Callbacks mCallbacks;
+
+    public interface Callbacks{
+        void onMusicUpdate(Music music);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Callbacks) {
+            mCallbacks = (Callbacks) context;
+        } else {
+            throw new RuntimeException("Activity not impl callback");
+        }
+    }
+
 
 
     private Long musicId;
@@ -66,55 +77,17 @@ public class MusicPlayerFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
-        LinearLayout layout = view.findViewById(R.id.linear_layout_root);
 
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BlankFragment blankFragment = BlankFragment.newInstance();
-                blankFragment.setTargetFragment(MusicPlayerFragment.this,
-                        1);
-                    blankFragment.show(getFragmentManager(), DIALOG_TAG);
-
-            }
-        });
         mRecyclerView = view.findViewById(R.id.recyclerView);
-        mSeekBar = view.findViewById(R.id.seekBar);
 
 
-        mPlay = view.findViewById(R.id.play);
-        mNext = view.findViewById(R.id.next);
-        mPrevious = view.findViewById(R.id.previous);
+
 //        Integer grideCount= getResources().getInteger(R.integer.refs.xmlres);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         mSoundAdapter = new SoundAdapter(mMusicLab.getMusicList());
         mRecyclerView.setAdapter(mSoundAdapter);
 
-
-
-        mPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mMusicLab.isPlayed()) {
-                    mPlay.setImageResource(R.drawable.ic_play);
-                    mMusicLab.pauseMedia();
-                }
-                else {
-                    mPlay.setImageResource(R.drawable.ic_pause);
-                    mMusicLab.playMedia();
-                }
-            }
-        });
-
-
-        mNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mMusicLab.nextMedia();
-            }
-        });
 
 
         return view;
@@ -160,7 +133,7 @@ public class MusicPlayerFragment extends Fragment {
         private Music mMusic;
 
 
-        public SoundHolder(@NonNull View itemView) {
+        public SoundHolder(@NonNull final View itemView) {
             super(itemView);
             mMusicImage = itemView.findViewById(R.id.image_music);
             mTitle = itemView.findViewById(R.id.title);
@@ -171,8 +144,9 @@ public class MusicPlayerFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMusicLab.playSong(mMusic);
-                    mTitle.setSelected(true);
+
+                        mCallbacks.onMusicUpdate(mMusic);
+//                        mTitle.setSelected(true);
                 }
             });
         }

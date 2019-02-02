@@ -13,43 +13,51 @@
         android:layout_alignParentBottom="true"
         android:padding="@dimen/space16"
         android:weightSum="5">
-        <ImageButton
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_repeat"
-            android:background="@null"/>
-        <ImageButton
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_backward"
-            android:background="@null"/>
-        <ImageButton
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_play"
-            android:background="@null"/>
 
         <ImageButton
-            android:layout_weight="1"
+            android:id="@+id/repeat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_forward"
-            android:background="@null"/>
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/ic_repeat" />
 
         <ImageButton
-            android:layout_weight="1"
+            android:id="@+id/rewind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_shufle"
-            android:background="@null"/>
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/ic_backward" />
+
+        <ImageButton
+            android:id="@+id/play"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/ic_play" />
+
+        <ImageButton
+            android:id="@+id/forward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/ic_forward" />
+
+        <ImageButton
+            android:id="@+id/shuffle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/ic_shufle" />
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/rl_progress"
@@ -119,8 +127,8 @@
 
         <ImageView
             android:id="@+id/image_cover"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center" />
     </android.support.v4.view.ViewPager>
 </RelativeLayout>

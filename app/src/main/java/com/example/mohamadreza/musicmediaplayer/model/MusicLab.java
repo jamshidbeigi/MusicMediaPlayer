@@ -13,10 +13,11 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MusicLab {
+public class MusicLab implements Serializable {
 
     private static MusicLab instance;
     private List<Music> musicList = new ArrayList<>();
@@ -166,33 +167,67 @@ public class MusicLab {
                 mMediaPlayer.start();
             }
         }
-        public void nextMedia() {
 
-        int seekto = mMediaPlayer.getCurrentPosition()+1;
-            if (seekto > mMediaPlayer.getDuration())
-                seekto = mMediaPlayer.getDuration();
-        mMediaPlayer.pause();
-        mMediaPlayer.seekTo(seekto);
-        mMediaPlayer.start();
-            if (!mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
-        }
-    }
 
     public void playSong(Music music){
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mContext, Uri.parse(music.getSrcData()));
             mMediaPlayer.prepare();
-            mMediaPlayer.start();
 
         } catch (IOException e) {
 
         }
     }
 
+    public Music getMusic(Long musicId){
+        for (int i=0; i<musicList.size();i++) {
+            if(musicList.get(i).getId()==musicId){
+                return musicList.get(i);
+            }
+        }
+        return null;
+    }
+
+    public Music nextMusic(Long id){
+        List<Music> musics = musicList;
+        for(int i=0; i<musics.size(); i++){
+            if(musics.get(i).getId()==id) {
+                if(i!=musics.size()-1) {
+                    return musics.get(i + 1);
+                }
+                else {
+                    return musics.get(0);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Music previousMusic(Long id){
+        List<Music> musics = musicList;
+        for(int i=0; i<musics.size(); i++){
+                if(musics.get(i).getId()==id) {
+                    if(i!=0) {
+                        return musics.get(i - 1);
+                    }
+                    else {
+                        return musics.get(0);
+                    }
+            }
+
+        }
+
+        return null;
+    }
+
     public boolean isPlayed(){
         return mMediaPlayer.isPlaying();
+    }
+
+    public Music CurrentMusic(){
+        return null;
     }
 
 //    public void playNext(){
