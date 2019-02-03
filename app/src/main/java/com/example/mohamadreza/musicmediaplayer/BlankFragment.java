@@ -77,7 +77,9 @@ public class BlankFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
          View view =inflater.inflate(R.layout.fragment_blank, container, false);
-         mPlay = view.findViewById(R.id.play);
+        mTitle = view.findViewById(R.id.tv_song);
+        mArtist = view.findViewById(R.id.tv_artist);
+        mPlay = view.findViewById(R.id.play);
         mNext = view.findViewById(R.id.forward);
         mPrevious = view.findViewById(R.id.rewind);
         mShuffle = view.findViewById(R.id.shuffle);
@@ -99,10 +101,47 @@ public class BlankFragment extends DialogFragment {
             }
         });
 
+        mNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMusic=mMusicLab.nextMusic(mMusic.getId());
+                updateUI();
+                if(mMusicLab.isPlayed()) {
+                    mMusicLab.playSong(mMusic);
+                    mMusicLab.playMedia();
+                    mPlay.setImageResource(R.drawable.ic_pause);
+                }
+            }
+        });
+
+        mPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMusic=mMusicLab.previousMusic(mMusic.getId());
+                updateUI();
+                if(mMusicLab.isPlayed()) {
+                    mMusicLab.playSong(mMusic);
+                    mMusicLab.playMedia();
+                    mPlay.setImageResource(R.drawable.ic_pause);
+                }
+            }
+        });
+
         mCover.setImageBitmap(mMusicLab.getMusicClipArt(mMusic.getSrcData()));
 
+        updateUI();
 
         return view;
+    }
+
+    public void updateUI(){
+
+        mTitle.setText(mMusic.getTitle());
+        mTitle.setSelected(true);
+        mArtist.setText(mMusic.getArtist());
+        mCover.setImageBitmap(mMusicLab.getMusicClipArt(mMusic.getSrcData()));
     }
 
 }

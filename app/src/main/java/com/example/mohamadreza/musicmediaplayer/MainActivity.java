@@ -24,9 +24,6 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
     private static final String DIALOG_TAG = "DialogDate";
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private TabItem mSongs;
-    private TabItem mAlbums;
-    private TabItem mArtists;
     private ImageView mPlay;
     private ImageView mPrevious;
     private ImageView mNext;
@@ -44,9 +41,6 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
 
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
-        mSongs =findViewById(R.id.sogs_tab);
-        mAlbums =findViewById(R.id.albums_tab);
-        mArtists =findViewById(R.id.artists_tab);
         mPlay = findViewById(R.id.play);
         mNext = findViewById(R.id.next);
         mTitle =findViewById(R.id.bar_title);
