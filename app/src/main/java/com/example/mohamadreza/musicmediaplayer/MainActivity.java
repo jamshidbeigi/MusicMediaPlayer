@@ -1,10 +1,6 @@
 package com.example.mohamadreza.musicmediaplayer;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,7 +14,7 @@ import android.widget.TextView;
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
 
-public class MainActivity extends AppCompatActivity implements  MusicPlayerFragment.Callbacks {
+public class MainActivity extends AppCompatActivity implements  MusicPlayerFragment.Callbacks , MusicPageFragment.Callbacks {
 
 
     private static final String DIALOG_TAG = "DialogDate";
@@ -51,10 +47,10 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlankFragment blankFragment = BlankFragment.newInstance(mMusic.getId(),mMusicLab);
-                blankFragment.setTargetFragment(mMusicPlayerFragment,
+                MusicPageFragment musicPageFragment = MusicPageFragment.newInstance(mMusic.getId());
+                musicPageFragment.setTargetFragment(mMusicPlayerFragment,
                         1);
-                blankFragment.show(getSupportFragmentManager(), DIALOG_TAG);
+                musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG);
 
             }
         });
@@ -83,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
                 mTitle.setText(mMusic.getTitle());
                 if(mMusicLab.isPlayed()) {
                     mMusicLab.playSong(mMusic);
+                    mMusicLab.playMedia();
                     mPlay.setImageResource(R.drawable.ic_pause);
                 }
             }
@@ -96,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
                 mTitle.setText(mMusic.getTitle());
                 if(mMusicLab.isPlayed()) {
                     mMusicLab.playSong(mMusic);
+                    mMusicLab.playMedia();
                     mPlay.setImageResource(R.drawable.ic_pause);
                 }
             }

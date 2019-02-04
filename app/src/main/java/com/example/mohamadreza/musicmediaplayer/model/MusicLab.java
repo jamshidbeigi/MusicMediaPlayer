@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MusicLab implements Serializable {
 
@@ -29,7 +30,8 @@ public class MusicLab implements Serializable {
     public MusicLab(Context context) {
         mMediaPlayer=new MediaPlayer();
         mContext = context;
-        loadMusic(mContext);
+        loadMusic();
+        loadAlbum();
     }
 
     public static MusicLab getInstance(Context context) {
@@ -43,10 +45,13 @@ public class MusicLab implements Serializable {
     public List<Music> getMusicList() {
         return musicList;
     }
+    public List<Album> getAlbumList() {
+        return albums;
+    }
 
-    public void loadMusic(Context context) {
+    public void loadMusic() {
 
-        ContentResolver musicResolver = context.getContentResolver();
+        ContentResolver musicResolver = mContext.getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
         String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
@@ -95,19 +100,17 @@ public class MusicLab implements Serializable {
         }
     }
 
+    public void loadAlbum() {
 
-    public void loadAlbum(Context context) {
-
-        ContentResolver musicResolver = context.getContentResolver();
+        ContentResolver musicResolver = mContext.getContentResolver();
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-        String sortOrder = MediaStore.Audio.Media.ALBUM + " ASC";
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, sortOrder);
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
 
         try {
             if (musicCursor != null && musicCursor.moveToFirst()) {
                 //get columns
-                int idColumn = musicCursor.getColumnIndex
-                        (MediaStore.Audio.Albums.ALBUM_ID);
+//                int idColumn = musicCursor.getColumnIndex
+//                        (MediaStore.Audio.Albums.ALBUM_ID);
                 int titleColumn = musicCursor.getColumnIndex
                         (MediaStore.Audio.Albums.ALBUM);
 
@@ -115,11 +118,11 @@ public class MusicLab implements Serializable {
 
 
                 do {
-                    long thisId = musicCursor.getLong(idColumn);
+//                    long thisId = musicCursor.getLong(idColumn);
                     String thisTitle = musicCursor.getString(titleColumn);
                     String thisdata = musicCursor.getString(data);
 
-                    albums.add(new Album(thisId,thisTitle,thisdata));
+                    albums.add(new Album(thisTitle,thisdata));
 
                 }
                 while (musicCursor.moveToNext());
@@ -131,6 +134,18 @@ public class MusicLab implements Serializable {
     }
 
 
+        public int shuffle(){
+            Random random =new Random();
+            int size = musicList.size();
+            return random.nextInt((size-1)+1);
+        }
+
+        public Long getMusicId(int index){
+
+        Music music = musicList.get(index);
+           return music.getId();
+        }
+
         public Bitmap getMusicClipArt(String path){
 
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -140,6 +155,14 @@ public class MusicLab implements Serializable {
                 return BitmapFactory.decodeByteArray(data,0,data.length);
                 return null;
         }
+
+        public void seekBar(int progress){
+        mMediaPlayer.seekTo(progress);
+        }
+
+    public int getCurrentPosition(){
+        return mMediaPlayer.getCurrentPosition();
+    }
 
         public void playMedia() {
             if (!mMediaPlayer.isPlaying()) {
@@ -230,18 +253,4 @@ public class MusicLab implements Serializable {
         return null;
     }
 
-//    public void playNext(){
-//        if(mMediaPlayer.is){
-//            int newSong = songPosn;
-//            while(newSong==songPosn){
-//                newSong=rand.nextInt(songs.size());
-//            }
-//            songPosn=newSong;
-//        }
-//        else{
-//            songPosn++;
-//            if(songPosn>=songs.size()) songPosn=0;
-//        }
-//        playSong();
-//    }
 }

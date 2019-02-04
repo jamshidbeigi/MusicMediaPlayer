@@ -23,6 +23,7 @@
 
         <ImageButton
             android:id="@+id/repeat"
+            android:tint="@color/galaxy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -59,6 +60,7 @@
 
         <ImageButton
             android:id="@+id/shuffle"
+            android:tint="@color/galaxy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -77,6 +79,8 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_bottom"
         tools:layout_editor_absoluteX="16dp"
         tools:ignore="MissingConstraints">
+
+
 
         <TextView
             android:id="@+id/tv_current_time"
@@ -98,23 +102,22 @@
             android:textColor="@color/colorTextGrey"
             android:textSize="14sp" />
 
-        <ProgressBar
+        <SeekBar
+            android:id="@+id/seekBar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/space8"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/space16"
-            android:layout_marginRight="@dimen/space16"
             android:layout_toLeftOf="@id/tv_full_time"
             android:layout_toRightOf="@id/tv_current_time"
             android:indeterminate="false"
-            android:progress="50"
+            android:tint="@color/galaxy"
+
             android:progressBackgroundTint="#E9E9E9"
-            android:progressDrawable="@drawable/progress_bar" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/tv_artist"
+        android:id="@+id/artist_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/rl_progress"
@@ -130,10 +133,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/tv_song"
+        android:id="@+id/album_text_view"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tv_artist"
+        android:layout_above="@id/artist_text_view"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -145,7 +148,7 @@
         android:text="Make War"
         android:textColor="@color/colorTextDark"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_artist"
+        app:layout_constraintBottom_toTopOf="@+id/artist_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
@@ -154,13 +157,13 @@
         android:id="@+id/image_cover"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_above="@id/tv_song"
+        android:layout_above="@id/album_text_view"
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/ic_pause"
-        app:layout_constraintBottom_toTopOf="@+id/tv_song"
+        app:layout_constraintBottom_toTopOf="@+id/album_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
