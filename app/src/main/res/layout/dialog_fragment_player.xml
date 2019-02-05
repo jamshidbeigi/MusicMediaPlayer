@@ -103,14 +103,14 @@
             android:textSize="14sp" />
 
         <SeekBar
+            android:max="100"
+            android:thumbTint="@color/galaxy"
+            android:progress="0"
             android:id="@+id/seekBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            style="@style/MySeekBar"
             android:layout_toLeftOf="@id/tv_full_time"
             android:layout_toRightOf="@id/tv_current_time"
             android:indeterminate="false"
-            android:tint="@color/galaxy"
-
-            android:progressBackgroundTint="#E9E9E9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" />

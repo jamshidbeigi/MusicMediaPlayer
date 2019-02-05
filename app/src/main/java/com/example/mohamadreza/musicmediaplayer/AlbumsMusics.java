@@ -1,9 +1,12 @@
 package com.example.mohamadreza.musicmediaplayer;
 
+
+import android.app.Dialog;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,31 +14,57 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
+
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MusicPlayerFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
-    private SoundAdapter mSoundAdapter;
-    private MusicLab mMusicLab;
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class AlbumsMusics extends DialogFragment {
 
     private Callbacks mCallbacks;
+    private static final String ALBUM_NAME="album_name";
+    private MusicLab mMusicLab;
+    private RecyclerView mRecyclerView;
+    private MusicAdapter mMusicAdapter;
+    private String mAlbumName;
+
 
     public interface Callbacks{
         void onMusicUpdate(Music music);
+    }
+
+    public static AlbumsMusics newInstance(String albumName) {
+        AlbumsMusics fragment = new AlbumsMusics();
+        Bundle args = new Bundle();
+        args.putString(ALBUM_NAME,albumName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof Callbacks) {
+        if (context instanceof AlbumsMusics.Callbacks) {
             mCallbacks = (Callbacks) context;
         } else {
             throw new RuntimeException("Activity not impl callback");
@@ -43,81 +72,35 @@ public class MusicPlayerFragment extends Fragment {
     }
 
 
-    private Long musicId;
-
-    private OnFragmentInteractionListener mListener;
-
-    public MusicPlayerFragment() {
+    public AlbumsMusics() {
         // Required empty public constructor
     }
 
-
-    // TODO: Rename and change types and number of parameters
-    public static MusicPlayerFragment newInstance() {
-        MusicPlayerFragment fragment = new MusicPlayerFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setRetainInstance(true);
-        mMusicLab = new MusicLab(getActivity());
-
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
+        mMusicLab = MusicLab.getInstance(getActivity());
+        mAlbumName = getArguments().getString(ALBUM_NAME);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+         View view =inflater.inflate(R.layout.recycler_view, container, false);
 
-        View view = inflater.inflate(R.layout.fragment_player, container, false);
-
-        mRecyclerView = view.findViewById(R.id.recyclerView);
+        mRecyclerView = view.findViewById(R.id.album_musics_list);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
-        mSoundAdapter = new SoundAdapter(mMusicLab.getMusicList());
-        mRecyclerView.setAdapter(mSoundAdapter);
-
-
+        mMusicAdapter = new MusicAdapter(mMusicLab.getAlbumsMusics(mAlbumName));
+        mRecyclerView.setAdapter(mMusicAdapter);
 
         return view;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//
-////        mMusicLab.release();
-//    }
 
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    public class SoundHolder extends RecyclerView.ViewHolder {
+    public class MusicHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
 
         private ImageView mMusicImage;
         private TextView mTitle;
@@ -127,7 +110,7 @@ public class MusicPlayerFragment extends Fragment {
         private Music mMusic;
 
 
-        public SoundHolder(@NonNull final View itemView) {
+        public MusicHolder(@NonNull final View itemView) {
             super(itemView);
             mMusicImage = itemView.findViewById(R.id.image_music);
             mTitle = itemView.findViewById(R.id.title);
@@ -139,7 +122,10 @@ public class MusicPlayerFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                        mCallbacks.onMusicUpdate(mMusic);
+
+                    mCallbacks.onMusicUpdate(mMusic);
+                    dismiss();
+
 //                        mTitle.setSelected(true);
                 }
             });
@@ -162,7 +148,7 @@ public class MusicPlayerFragment extends Fragment {
 
     }
 
-    private class SoundAdapter extends RecyclerView.Adapter<SoundHolder> {
+    private class MusicAdapter extends RecyclerView.Adapter<MusicHolder> {
 
         private List<Music> mSounds;
 
@@ -170,18 +156,18 @@ public class MusicPlayerFragment extends Fragment {
             mSounds = sounds;
         }
 
-        public SoundAdapter(List<Music> sounds) {
+        public MusicAdapter(List<Music> sounds) {
             mSounds = sounds;
         }
 
         @Override
-        public SoundHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public MusicHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.list_item, parent, false);
-            return new SoundHolder(view);
+            return new MusicHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SoundHolder holder, int position) {
+        public void onBindViewHolder(@NonNull MusicHolder holder, int position) {
             Music music = mSounds.get(position);
             holder.bindSound(music);
         }
@@ -191,5 +177,6 @@ public class MusicPlayerFragment extends Fragment {
             return mSounds.size();
         }
     }
+
 
 }

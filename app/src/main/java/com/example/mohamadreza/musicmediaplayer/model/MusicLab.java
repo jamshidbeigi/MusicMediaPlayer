@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -23,6 +24,7 @@ public class MusicLab implements Serializable {
     private static MusicLab instance;
     private List<Music> musicList = new ArrayList<>();
     private List<Album> albums = new ArrayList<>();
+    private List<Artist> artists = new ArrayList<>();
     private MediaPlayer mMediaPlayer;
     private Context mContext;
     private int resumePosition;
@@ -32,6 +34,7 @@ public class MusicLab implements Serializable {
         mContext = context;
         loadMusic();
         loadAlbum();
+        loadArtist();
     }
 
     public static MusicLab getInstance(Context context) {
@@ -48,6 +51,10 @@ public class MusicLab implements Serializable {
     public List<Album> getAlbumList() {
         return albums;
     }
+    public List<Artist> getArtistList() {
+        return artists;
+    }
+
 
     public void loadMusic() {
 
@@ -118,7 +125,7 @@ public class MusicLab implements Serializable {
 
 
                 do {
-//                    long thisId = musicCursor.getLong(idColumn);
+//                    Long thisId = musicCursor.getLong(idColumn);
                     String thisTitle = musicCursor.getString(titleColumn);
                     String thisdata = musicCursor.getString(data);
 
@@ -131,6 +138,85 @@ public class MusicLab implements Serializable {
             musicCursor.close();
 
         }
+    }
+
+
+    public void loadArtist() {
+
+        ContentResolver musicResolver = mContext.getContentResolver();
+        Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+
+        try {
+            if (musicCursor != null && musicCursor.moveToFirst()) {
+
+                int titleColumn = musicCursor.getColumnIndex
+                        (MediaStore.Audio.Artists.ARTIST);
+
+                do {
+                    String thisTitle = musicCursor.getString(titleColumn);
+
+                    artists.add(new Artist(thisTitle));
+
+                }
+                while (musicCursor.moveToNext());
+            }
+        } finally {
+            musicCursor.close();
+
+        }
+    }
+
+
+        public List<Music> getAlbumsMusics(String albumName) {
+
+        List<Music> albumsMusics = new ArrayList();
+
+        for(int i =0 ; i<musicList.size();i++){
+            if(musicList.get(i).getAlbum().equals(albumName)) {
+                Music music = musicList.get(i);
+                albumsMusics.add(music);
+            }
+        }
+        return albumsMusics;
+    }
+
+
+    public List<Music> getArtistsMusics(String ArtistName) {
+
+        List<Music> albumsMusics = new ArrayList();
+
+        for(int i =0 ; i<musicList.size();i++){
+            if(musicList.get(i).getArtist().equals(ArtistName)) {
+                Music music = musicList.get(i);
+                albumsMusics.add(music);
+            }
+        }
+        return albumsMusics;
+    }
+
+    public int albumsMusicCount(String albumName) {
+        List<Music> albumsMusics = new ArrayList();
+        int count = 0;
+        for (int i = 0; i < musicList.size(); i++) {
+            if (musicList.get(i).getAlbum().equals(albumName)) {
+                count++;
+            }
+        }
+        return count;
+
+    }
+
+    public int artistsMusicCount(String artistName) {
+        List<Music> artistsMusics = new ArrayList();
+        int count = 0;
+        for (int i = 0; i < musicList.size(); i++) {
+            if (musicList.get(i).getArtist().equals(artistName)) {
+                count++;
+            }
+        }
+        return count;
+
     }
 
 
@@ -177,6 +263,19 @@ public class MusicLab implements Serializable {
             }
         }
 
+        public void autoPlayNext(Music music){
+            final Long currentId = music.getId();
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                public void onCompletion(MediaPlayer mp) {
+
+                   Music nextmusic = nextMusic(currentId);
+                   playSong(nextmusic);
+                }
+            });
+            }
+
+
         public void pauseMedia() {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
@@ -191,12 +290,25 @@ public class MusicLab implements Serializable {
             }
         }
 
+        public void Repeat(){
+
+                if(mMediaPlayer.isLooping())
+                mMediaPlayer.setLooping(false);
+                else
+                    mMediaPlayer.setLooping(true);
+
+        }
+
 
     public void playSong(Music music){
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mContext, Uri.parse(music.getSrcData()));
             mMediaPlayer.prepare();
+            autoPlayNext(music);
+            if(!isPlayed()) {
+                playMedia();
+            }
 
         } catch (IOException e) {
 

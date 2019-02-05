@@ -14,7 +14,8 @@ import android.widget.TextView;
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
 
-public class MainActivity extends AppCompatActivity implements  MusicPlayerFragment.Callbacks , MusicPageFragment.Callbacks {
+public class MainActivity extends AppCompatActivity implements  MusicPlayerFragment.Callbacks , MusicPageFragment.Callbacks
+        ,AlbumsMusics.Callbacks,ArtistsMusics.Callbacks {
 
 
     private static final String DIALOG_TAG = "DialogDate";
@@ -135,5 +136,13 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         mPlay.setImageResource(R.drawable.ic_pause);
         mMusicLab.playSong(music);
         mMusicLab.playMedia();
+
+    }
+
+    @Override
+    public void onMusicUpdatePage(Music music) {
+        mMusic = music;
+        mTitle.setText(mMusic.getTitle());
+        mPlay.setImageResource(R.drawable.ic_pause);
     }
 }

@@ -3,6 +3,7 @@ package com.example.mohamadreza.musicmediaplayer;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -41,20 +42,21 @@ public class MusicPageFragment extends DialogFragment {
     private TextView mEndTime;
     private TextView mCurrentTime;
     private Boolean mISShuffle;
+    private Boolean mIsRepeat;
     private Integer randomIndex;
 
-    private MusicPlayerFragment.Callbacks mCallbacks;
+    private MusicPageFragment.Callbacks mCallbacks;
 
     public interface Callbacks{
-        void onMusicUpdate(Music music);
+        void onMusicUpdatePage(Music music);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof MusicPlayerFragment.Callbacks) {
-            mCallbacks = (MusicPlayerFragment.Callbacks) context;
+        if (context instanceof MusicPageFragment.Callbacks) {
+            mCallbacks = (MusicPageFragment.Callbacks) context;
         } else {
             throw new RuntimeException("Activity not impl callback");
         }
@@ -113,14 +115,16 @@ public class MusicPageFragment extends DialogFragment {
         mMusicLab = MusicLab.getInstance(getActivity());
         mMusic = mMusicLab.getMusic(musicId);
         mISShuffle=false;
+        mIsRepeat=false;
 
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View view =inflater.inflate(R.layout.fragment_blank, container, false);
+         View view =inflater.inflate(R.layout.dialog_fragment_player, container, false);
         mTitle = view.findViewById(R.id.album_text_view);
         mArtist = view.findViewById(R.id.artist_text_view);
         mPlay = view.findViewById(R.id.play);
@@ -133,9 +137,16 @@ public class MusicPageFragment extends DialogFragment {
         mCurrentTime = view.findViewById(R.id.tv_current_time);
         mEndTime = view.findViewById(R.id.tv_full_time);
 
-
         mSeekBar.setMax(mMusic.getDurationmusic()); // Set the Maximum range of the
         mSeekBar.setProgress(mMusicLab.getCurrentPosition());
+
+
+        mRepeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMusicLab.Repeat();
+            }
+        });
 
 
 
@@ -288,7 +299,7 @@ public class MusicPageFragment extends DialogFragment {
         );
         mEndTime.setText(time);
         mSeekBar.setMax(mMusic.getDurationmusic());
-        mCallbacks.onMusicUpdate(mMusic);
+        mCallbacks.onMusicUpdatePage(mMusic);
 
     }
 }

@@ -20,9 +20,11 @@ import java.util.List;
 
 public class AlbumFragment extends Fragment {
 
-    private RecyclerView mRecyclerView2;
+    private RecyclerView mRecyclerViewAlbum;
     private AlbumAdapter mAlbumAdapter;
     private MusicLab mMusicLab;
+    private static final String DIALOG_TAG_MUSIC = "DialogMusic";
+
 
 //    private Callbacks mCallbacks;
 
@@ -69,15 +71,15 @@ public class AlbumFragment extends Fragment {
         View view = inflater.inflate(R.layout.album_recycler_layout, container, false);
 
 
-        mRecyclerView2 = view.findViewById(R.id.recyclerView2);
+        mRecyclerViewAlbum = view.findViewById(R.id.recyclerViewalbum);
 
 
 
 //        Integer grideCount= getResources().getInteger(R.integer.refs.xmlres);
-        mRecyclerView2.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mRecyclerViewAlbum.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         mAlbumAdapter = new AlbumAdapter(mMusicLab.getAlbumList());
-        mRecyclerView2.setAdapter(mAlbumAdapter);
+        mRecyclerViewAlbum.setAdapter(mAlbumAdapter);
 
 
 
@@ -131,10 +133,10 @@ public class AlbumFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    MusicPageFragment musicPageFragment = MusicPageFragment.newInstance(mAlbum.getId(),mMusicLab);
-//                    musicPageFragment.setTargetFragment(mMusicPlayerFragment,
-//                            1);
-//                    musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG);
+                    AlbumsMusics albumsMusics = AlbumsMusics.newInstance(mAlbum.getTitle());
+                    albumsMusics.setTargetFragment(AlbumFragment.this,
+                            1);
+                    albumsMusics.show(getFragmentManager(), DIALOG_TAG_MUSIC);
 
 //                    mCallbacks.onMusicUpdate(mAlbum);
 //                        mTitle.setSelected(true);
