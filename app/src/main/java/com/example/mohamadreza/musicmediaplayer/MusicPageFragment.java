@@ -192,6 +192,7 @@ public class MusicPageFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
 
+                mSeekBar.setProgress(0);
                 if (mISShuffle){
                     randomIndex= mMusicLab.shuffle();
                     Long music_id = mMusicLab.getMusicId(randomIndex);
@@ -220,6 +221,7 @@ public class MusicPageFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
 
+                mSeekBar.setProgress(0);
                 if (mISShuffle){
                     randomIndex= mMusicLab.shuffle();
                     Long music_id = mMusicLab.getMusicId(randomIndex);

@@ -28,13 +28,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class ArtistsMusics extends DialogFragment {
 
-    private Callbacks mCallbacks;
     private static final String ARTIST_NAME="artist_name";
     private MusicLab mMusicLab;
     private RecyclerView mRecyclerView;
     private MusicAdapter mMusicAdapter;
     private String mArtistName;
-
+    private Callbacks mCallbacks;
 
     public interface Callbacks{
         void onMusicUpdate(Music music);

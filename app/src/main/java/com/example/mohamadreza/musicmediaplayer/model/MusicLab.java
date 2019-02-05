@@ -271,6 +271,9 @@ public class MusicLab implements Serializable {
 
                    Music nextmusic = nextMusic(currentId);
                    playSong(nextmusic);
+                    if(!isPlayed()) {
+                        playMedia();
+                    }
                 }
             });
             }
@@ -306,10 +309,6 @@ public class MusicLab implements Serializable {
             mMediaPlayer.setDataSource(mContext, Uri.parse(music.getSrcData()));
             mMediaPlayer.prepare();
             autoPlayNext(music);
-            if(!isPlayed()) {
-                playMedia();
-            }
-
         } catch (IOException e) {
 
         }
@@ -359,10 +358,6 @@ public class MusicLab implements Serializable {
 
     public boolean isPlayed(){
         return mMediaPlayer.isPlaying();
-    }
-
-    public Music CurrentMusic(){
-        return null;
     }
 
 }
