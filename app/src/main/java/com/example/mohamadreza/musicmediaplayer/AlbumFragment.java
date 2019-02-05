@@ -26,23 +26,6 @@ public class AlbumFragment extends Fragment {
     private static final String DIALOG_TAG_MUSIC = "DialogMusic";
 
 
-//    private Callbacks mCallbacks;
-
-//    public interface Callbacks{
-//        void onMusicUpdate(Music music);
-//    }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        if (context instanceof Callbacks) {
-//            mCallbacks = (Callbacks) context;
-//        } else {
-//            throw new RuntimeException("Activity not impl callback");
-//        }
-//    }
-
     public AlbumFragment() {
         // Required empty public constructor
     }
@@ -86,30 +69,6 @@ public class AlbumFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//
-////        mMusicLab.release();
-//    }
-
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -150,9 +109,8 @@ public class AlbumFragment extends Fragment {
 
             Drawable img = Drawable.createFromPath(mAlbum.getSrcData());
             mAlbumCover.setImageDrawable(img);
-//            mAlbumCover.setImageResource(mAlbum.getSrcData());
             mAlbumTitle.setText(mAlbum.getTitle());
-//            mMusicCount.setText(mAlbum.ge);
+            mMusicCount.setText(mMusicLab.albumsMusicCount(mAlbum.getTitle())+" songs");
         }
 
     }

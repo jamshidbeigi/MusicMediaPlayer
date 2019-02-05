@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
@@ -60,14 +61,18 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         mPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMusicLab.isPlayed()) {
-                    mPlay.setImageResource(R.drawable.ic_play);
-                    mMusicLab.pauseMedia();
+                if (mMusic == null) {
+                    Toast.makeText(MainActivity.this, "not any music selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (mMusicLab.isPlayed()) {
+                        mPlay.setImageResource(R.drawable.ic_play);
+                        mMusicLab.pauseMedia();
+                    } else {
+                        mPlay.setImageResource(R.drawable.ic_pause);
+                        mMusicLab.playSong(mMusic);
+                        mMusicLab.resumeMedia();
+                    }
                 }
-                else {
-                    mPlay.setImageResource(R.drawable.ic_pause);
-                    mMusicLab.playSong(mMusic);
-                    mMusicLab.resumeMedia();                }
             }
         });
 
@@ -75,13 +80,16 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mMusic=mMusicLab.nextMusic(mMusic.getId());
-                mTitle.setText(mMusic.getTitle());
-                if(mMusicLab.isPlayed()) {
-                    mMusicLab.playSong(mMusic);
-                    mMusicLab.playMedia();
-                    mPlay.setImageResource(R.drawable.ic_pause);
+                if (mMusic == null) {
+                    Toast.makeText(MainActivity.this, "not any music selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    mMusic = mMusicLab.nextMusic(mMusic.getId());
+                    mTitle.setText(mMusic.getTitle());
+                    if (mMusicLab.isPlayed()) {
+                        mMusicLab.playSong(mMusic);
+                        mMusicLab.playMedia();
+                        mPlay.setImageResource(R.drawable.ic_pause);
+                    }
                 }
             }
         });
@@ -90,12 +98,16 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
             @Override
             public void onClick(View v) {
 
-                mMusic=mMusicLab.previousMusic(mMusic.getId());
-                mTitle.setText(mMusic.getTitle());
-                if(mMusicLab.isPlayed()) {
-                    mMusicLab.playSong(mMusic);
-                    mMusicLab.playMedia();
-                    mPlay.setImageResource(R.drawable.ic_pause);
+                if (mMusic == null) {
+                    Toast.makeText(MainActivity.this, "not any music selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    mMusic = mMusicLab.previousMusic(mMusic.getId());
+                    mTitle.setText(mMusic.getTitle());
+                    if (mMusicLab.isPlayed()) {
+                        mMusicLab.playSong(mMusic);
+                        mMusicLab.playMedia();
+                        mPlay.setImageResource(R.drawable.ic_pause);
+                    }
                 }
             }
         });

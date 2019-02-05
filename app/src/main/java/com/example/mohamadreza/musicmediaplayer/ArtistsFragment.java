@@ -57,9 +57,6 @@ public class ArtistsFragment extends Fragment {
 
         mRecyclerViewArtist = view.findViewById(R.id.recyclerViewartist);
 
-
-
-//        Integer grideCount= getResources().getInteger(R.integer.refs.xmlres);
         mRecyclerViewArtist.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAlbumAdapter = new ArtistAdapter(mMusicLab.getArtistList());
@@ -105,7 +102,7 @@ public class ArtistsFragment extends Fragment {
         public void bindSound(Artist artist) {
             mArtist = artist;
             mArtistTitle.setText(mArtist.getTitle());
-            mMusicCount.setText(mMusicLab.artistsMusicCount(mArtist.getTitle())+"");
+            mMusicCount.setText(mMusicLab.artistsMusicCount(mArtist.getTitle())+" songs");
         }
 
     }
