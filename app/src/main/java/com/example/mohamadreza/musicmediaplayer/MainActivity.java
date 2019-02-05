@@ -49,11 +49,14 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MusicPageFragment musicPageFragment = MusicPageFragment.newInstance(mMusic.getId());
-                musicPageFragment.setTargetFragment(mMusicPlayerFragment,
-                        1);
-                musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG);
-
+                if (mMusic == null) {
+                    Toast.makeText(MainActivity.this, "not any music selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    MusicPageFragment musicPageFragment = MusicPageFragment.newInstance(mMusic.getId());
+                    musicPageFragment.setTargetFragment(mMusicPlayerFragment,
+                            1);
+                    musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG);
+                }
             }
         });
 
