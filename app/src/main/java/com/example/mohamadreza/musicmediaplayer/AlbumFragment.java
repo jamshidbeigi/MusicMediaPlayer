@@ -1,6 +1,5 @@
 package com.example.mohamadreza.musicmediaplayer;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,14 +15,15 @@ import android.widget.TextView;
 
 import com.example.mohamadreza.musicmediaplayer.model.Album;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
+
 import java.util.List;
 
 public class AlbumFragment extends Fragment {
 
+    private static final String DIALOG_TAG_MUSIC = "DialogMusic";
     private RecyclerView mRecyclerViewAlbum;
     private AlbumAdapter mAlbumAdapter;
     private MusicLab mMusicLab;
-    private static final String DIALOG_TAG_MUSIC = "DialogMusic";
 
 
     public AlbumFragment() {
@@ -57,13 +57,11 @@ public class AlbumFragment extends Fragment {
         mRecyclerViewAlbum = view.findViewById(R.id.recyclerViewalbum);
 
 
-
 //        Integer grideCount= getResources().getInteger(R.integer.refs.xmlres);
         mRecyclerViewAlbum.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         mAlbumAdapter = new AlbumAdapter(mMusicLab.getAlbumList());
         mRecyclerViewAlbum.setAdapter(mAlbumAdapter);
-
 
 
         return view;
@@ -110,7 +108,7 @@ public class AlbumFragment extends Fragment {
             Drawable img = Drawable.createFromPath(mAlbum.getSrcData());
             mAlbumCover.setImageDrawable(img);
             mAlbumTitle.setText(mAlbum.getTitle());
-            mMusicCount.setText(mMusicLab.albumsMusicCount(mAlbum.getTitle())+" songs");
+            mMusicCount.setText(mMusicLab.albumsMusicCount(mAlbum.getTitle()) + " songs");
         }
 
     }
@@ -119,11 +117,11 @@ public class AlbumFragment extends Fragment {
 
         private List<Album> mAlbums;
 
-        public void setAlbums(List<Album> albums) {
+        public AlbumAdapter(List<Album> albums) {
             mAlbums = albums;
         }
 
-        public AlbumAdapter(List<Album> albums) {
+        public void setAlbums(List<Album> albums) {
             mAlbums = albums;
         }
 

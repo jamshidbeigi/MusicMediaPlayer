@@ -1,30 +1,27 @@
 package com.example.mohamadreza.musicmediaplayer;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.mohamadreza.musicmediaplayer.model.Album;
 import com.example.mohamadreza.musicmediaplayer.model.Artist;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
+
 import java.util.List;
 
 public class ArtistsFragment extends Fragment {
 
+    private static final String DIALOG_TAG_MUSIC = "DialogMusic";
     private RecyclerView mRecyclerViewArtist;
     private ArtistAdapter mAlbumAdapter;
     private MusicLab mMusicLab;
-    private static final String DIALOG_TAG_MUSIC = "DialogMusic";
 
 
     public ArtistsFragment() {
@@ -63,10 +60,8 @@ public class ArtistsFragment extends Fragment {
         mRecyclerViewArtist.setAdapter(mAlbumAdapter);
 
 
-
         return view;
     }
-
 
 
     public interface OnFragmentInteractionListener {
@@ -102,7 +97,7 @@ public class ArtistsFragment extends Fragment {
         public void bindSound(Artist artist) {
             mArtist = artist;
             mArtistTitle.setText(mArtist.getTitle());
-            mMusicCount.setText(mMusicLab.artistsMusicCount(mArtist.getTitle())+" songs");
+            mMusicCount.setText(mMusicLab.artistsMusicCount(mArtist.getTitle()) + " songs");
         }
 
     }
@@ -111,11 +106,11 @@ public class ArtistsFragment extends Fragment {
 
         private List<Artist> mArtists;
 
-        public void setArtists(List<Artist> artists) {
+        public ArtistAdapter(List<Artist> artists) {
             mArtists = artists;
         }
 
-        public ArtistAdapter(List<Artist> artists) {
+        public void setArtists(List<Artist> artists) {
             mArtists = artists;
         }
 

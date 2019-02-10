@@ -6,7 +6,7 @@ public class Album {
     private String mTitle;
     private String srcData;
 
-    public Album( String title, String srcData) {
+    public Album(String title, String srcData) {
 //        mId = id;
         mTitle = title;
         this.srcData = srcData;

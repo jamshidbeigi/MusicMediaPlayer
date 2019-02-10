@@ -4,7 +4,7 @@ public class Artist {
 
     private String mTitle;
 
-    public Artist( String title ) {
+    public Artist(String title) {
         mTitle = title;
     }
 

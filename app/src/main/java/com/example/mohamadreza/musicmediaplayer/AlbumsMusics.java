@@ -28,22 +28,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class AlbumsMusics extends DialogFragment {
 
+    private static final String ALBUM_NAME = "album_name";
     private Callbacks mCallbacks;
-    private static final String ALBUM_NAME="album_name";
     private MusicLab mMusicLab;
     private RecyclerView mRecyclerView;
     private MusicAdapter mMusicAdapter;
     private String mAlbumName;
 
 
-    public interface Callbacks{
-        void onMusicUpdate(Music music);
+    public AlbumsMusics() {
+        // Required empty public constructor
     }
 
     public static AlbumsMusics newInstance(String albumName) {
         AlbumsMusics fragment = new AlbumsMusics();
         Bundle args = new Bundle();
-        args.putString(ALBUM_NAME,albumName);
+        args.putString(ALBUM_NAME, albumName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,11 +71,6 @@ public class AlbumsMusics extends DialogFragment {
         }
     }
 
-
-    public AlbumsMusics() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +83,7 @@ public class AlbumsMusics extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View view =inflater.inflate(R.layout.recycler_view, container, false);
+        View view = inflater.inflate(R.layout.recycler_view, container, false);
 
         mRecyclerView = view.findViewById(R.id.album_musics_list);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
@@ -99,6 +94,9 @@ public class AlbumsMusics extends DialogFragment {
         return view;
     }
 
+    public interface Callbacks {
+        void onMusicUpdate(Music music);
+    }
 
     public class MusicHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
 
@@ -152,11 +150,11 @@ public class AlbumsMusics extends DialogFragment {
 
         private List<Music> mSounds;
 
-        public void setSounds(List<Music> sounds) {
+        public MusicAdapter(List<Music> sounds) {
             mSounds = sounds;
         }
 
-        public MusicAdapter(List<Music> sounds) {
+        public void setSounds(List<Music> sounds) {
             mSounds = sounds;
         }
 

@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
+
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +26,20 @@ public class MusicPlayerFragment extends Fragment {
     private MusicLab mMusicLab;
 
     private Callbacks mCallbacks;
+    private Long musicId;
+    private OnFragmentInteractionListener mListener;
 
-    public interface Callbacks{
-        void onMusicUpdate(Music music);
+
+    public MusicPlayerFragment() {
+        // Required empty public constructor
+    }
+
+    // TODO: Rename and change types and number of parameters
+    public static MusicPlayerFragment newInstance() {
+        MusicPlayerFragment fragment = new MusicPlayerFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -40,24 +51,6 @@ public class MusicPlayerFragment extends Fragment {
         } else {
             throw new RuntimeException("Activity not impl callback");
         }
-    }
-
-
-    private Long musicId;
-
-    private OnFragmentInteractionListener mListener;
-
-    public MusicPlayerFragment() {
-        // Required empty public constructor
-    }
-
-
-    // TODO: Rename and change types and number of parameters
-    public static MusicPlayerFragment newInstance() {
-        MusicPlayerFragment fragment = new MusicPlayerFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -83,8 +76,11 @@ public class MusicPlayerFragment extends Fragment {
         mRecyclerView.setAdapter(mSoundAdapter);
 
 
-
         return view;
+    }
+
+    public interface Callbacks {
+        void onMusicUpdate(Music music);
     }
 
 //    @Override
@@ -139,7 +135,7 @@ public class MusicPlayerFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                        mCallbacks.onMusicUpdate(mMusic);
+                    mCallbacks.onMusicUpdate(mMusic);
 //                        mTitle.setSelected(true);
                 }
             });
@@ -166,11 +162,11 @@ public class MusicPlayerFragment extends Fragment {
 
         private List<Music> mSounds;
 
-        public void setSounds(List<Music> sounds) {
+        public SoundAdapter(List<Music> sounds) {
             mSounds = sounds;
         }
 
-        public SoundAdapter(List<Music> sounds) {
+        public void setSounds(List<Music> sounds) {
             mSounds = sounds;
         }
 

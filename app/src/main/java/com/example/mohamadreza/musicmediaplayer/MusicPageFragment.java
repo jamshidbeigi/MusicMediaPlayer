@@ -3,9 +3,7 @@ package com.example.mohamadreza.musicmediaplayer;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -14,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.example.mohamadreza.musicmediaplayer.db.DaoLab;
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
 
@@ -24,8 +24,9 @@ import java.util.concurrent.TimeUnit;
 public class MusicPageFragment extends DialogFragment {
 
 
-    private static final String ARG_MUSIC_ID="music_id";
-    private static final String ARG_MUSIC_LAB="music_lab_obj";
+    private static final String ARG_MUSIC_ID = "music_id";
+    private static final String ARG_MUSIC_LAB = "music_lab_obj";
+    private static final String DIALOG_TAG_LYRIC = "music_id_lyric";
 
 
     private ImageView mCover;
@@ -36,7 +37,9 @@ public class MusicPageFragment extends DialogFragment {
     private ImageView mRepeat;
     private TextView mTitle;
     private TextView mArtist;
+    private TextView mSetLyric;
     private MusicLab mMusicLab;
+    private DaoLab mDaoLab;
     private Music mMusic;
     private SeekBar mSeekBar;
     private TextView mEndTime;
@@ -44,11 +47,40 @@ public class MusicPageFragment extends DialogFragment {
     private Boolean mISShuffle;
     private Boolean mIsRepeat;
     private Integer randomIndex;
+    private ToggleButton mFavorit;
+    private boolean isFavorit=false;
 
     private MusicPageFragment.Callbacks mCallbacks;
+    private Handler mSeekbarUpdateHandler = new Handler();
+    private Runnable mUpdateSeekbar = new Runnable() {
+        @Override
+        public void run() {
+            if (mMusicLab.isPlayed()) {
+                int currentDuration = mMusicLab.getCurrentPosition();
+                mSeekBar.setProgress(currentDuration);
+//                mSeekbarUpdateHandler.postDelayed(this, 500);
 
-    public interface Callbacks{
-        void onMusicUpdatePage(Music music);
+                mCurrentTime.setText(milliSecondsToTimer((long) currentDuration));
+            } else {
+                mCurrentTime.removeCallbacks(this);
+            }
+            mSeekbarUpdateHandler.postDelayed(this, 1000);
+        }
+
+    };
+
+
+    public MusicPageFragment() {
+        // Required empty public constructor
+    }
+
+    // TODO: Rename and change types and number of parameters
+    public static MusicPageFragment newInstance(Long musicId) {
+        MusicPageFragment fragment = new MusicPageFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_MUSIC_ID, musicId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -60,30 +92,6 @@ public class MusicPageFragment extends DialogFragment {
         } else {
             throw new RuntimeException("Activity not impl callback");
         }
-    }
-
-
-    private Handler mSeekbarUpdateHandler = new Handler();
-    private Runnable mUpdateSeekbar = new Runnable() {
-        @Override
-        public void run() {
-            if (mMusicLab.isPlayed()) {
-                mSeekBar.setProgress(mMusicLab.getCurrentPosition());
-//               int currentDuration = mMusicLab.getCurrentPosition();
-                mSeekbarUpdateHandler.postDelayed(this, 500);
-
-//                mCurrentTime.setText("" + milliSecondsToTimer((long) currentDuration));
-//                mCurrentTime.postDelayed(this, 1000);
-//            }
-//            else {
-//            mCurrentTime.removeCallbacks(this);
-//        }
-            }
-        }
-    };
-
-    public MusicPageFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -98,25 +106,17 @@ public class MusicPageFragment extends DialogFragment {
 
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static MusicPageFragment newInstance(Long musicId) {
-        MusicPageFragment fragment = new MusicPageFragment();
-        Bundle args = new Bundle();
-        args.putLong(ARG_MUSIC_ID,musicId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
         Long musicId = getArguments().getLong(ARG_MUSIC_ID);
         mMusicLab = MusicLab.getInstance(getActivity());
+        mDaoLab = DaoLab.getInstance();
+        isFavorit=mDaoLab.isFavoriut(mMusic);
         mMusic = mMusicLab.getMusic(musicId);
-        mISShuffle=false;
-        mIsRepeat=false;
-
+        mISShuffle = false;
+        mIsRepeat = false;
     }
 
     @SuppressLint("ResourceAsColor")
@@ -124,7 +124,7 @@ public class MusicPageFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View view =inflater.inflate(R.layout.dialog_fragment_player, container, false);
+        View view = inflater.inflate(R.layout.dialog_fragment_player, container, false);
         mTitle = view.findViewById(R.id.album_text_view);
         mArtist = view.findViewById(R.id.artist_text_view);
         mPlay = view.findViewById(R.id.play);
@@ -136,9 +136,33 @@ public class MusicPageFragment extends DialogFragment {
         mSeekBar = view.findViewById(R.id.seekBar);
         mCurrentTime = view.findViewById(R.id.tv_current_time);
         mEndTime = view.findViewById(R.id.tv_full_time);
-
+        mSetLyric = view.findViewById(R.id.set_lyric);
+        mFavorit = view .findViewById(R.id.tb_love);
         mSeekBar.setMax(mMusic.getDurationmusic()); // Set the Maximum range of the
         mSeekBar.setProgress(mMusicLab.getCurrentPosition());
+
+
+        if(isFavorit) {
+            mFavorit.setChecked(true);
+        }
+        else{
+            mFavorit.setChecked(false);
+        }
+
+        mFavorit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isFavorit){
+                    isFavorit=!isFavorit;
+                    mDaoLab.removeFavorit(mMusic);
+                }
+                else{
+                    isFavorit=!isFavorit;
+                    mDaoLab.AddFavorit(mMusic);
+                }
+
+            }
+        });
 
 
         mRepeat.setOnClickListener(new View.OnClickListener() {
@@ -149,11 +173,22 @@ public class MusicPageFragment extends DialogFragment {
         });
 
 
+        mSetLyric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LyricFragment fragmentAdd = LyricFragment.newInstance(mMusic.getId());
+                fragmentAdd.setTargetFragment(MusicPageFragment.this,
+                        2);
+                if (getFragmentManager() != null) {
+                    fragmentAdd.show(getFragmentManager(), DIALOG_TAG_LYRIC);
+                }
+            }
+        });
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser){
+                if (fromUser) {
                     mMusicLab.seekBar(progress);
 
                 }
@@ -176,11 +211,10 @@ public class MusicPageFragment extends DialogFragment {
         mPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMusicLab.isPlayed()) {
+                if (mMusicLab.isPlayed()) {
                     mPlay.setImageResource(R.drawable.ic_play);
                     mMusicLab.pauseMedia();
-                }
-                else {
+                } else {
                     mPlay.setImageResource(R.drawable.ic_pause);
                     mMusicLab.playSong(mMusic);
                     mMusicLab.resumeMedia();
@@ -193,8 +227,8 @@ public class MusicPageFragment extends DialogFragment {
             public void onClick(View v) {
 
                 mSeekBar.setProgress(0);
-                if (mISShuffle){
-                    randomIndex= mMusicLab.shuffle();
+                if (mISShuffle) {
+                    randomIndex = mMusicLab.shuffle();
                     Long music_id = mMusicLab.getMusicId(randomIndex);
                     mMusic = mMusicLab.nextMusic(music_id);
                     updateUI();
@@ -204,8 +238,7 @@ public class MusicPageFragment extends DialogFragment {
                         mMusicLab.playMedia();
                         mPlay.setImageResource(R.drawable.ic_pause);
                     }
-                }
-                    else{
+                } else {
                     mMusic = mMusicLab.nextMusic(mMusic.getId());
                     updateUI();
                     if (mMusicLab.isPlayed()) {
@@ -222,8 +255,8 @@ public class MusicPageFragment extends DialogFragment {
             public void onClick(View v) {
 
                 mSeekBar.setProgress(0);
-                if (mISShuffle){
-                    randomIndex= mMusicLab.shuffle();
+                if (mISShuffle) {
+                    randomIndex = mMusicLab.shuffle();
                     Long music_id = mMusicLab.getMusicId(randomIndex);
                     mMusic = mMusicLab.nextMusic(music_id);
                     updateUI();
@@ -234,9 +267,9 @@ public class MusicPageFragment extends DialogFragment {
                     }
                 }
 
-                mMusic=mMusicLab.previousMusic(mMusic.getId());
+                mMusic = mMusicLab.previousMusic(mMusic.getId());
                 updateUI();
-                if(mMusicLab.isPlayed()) {
+                if (mMusicLab.isPlayed()) {
                     mMusicLab.playSong(mMusic);
                     mMusicLab.playMedia();
                     mPlay.setImageResource(R.drawable.ic_pause);
@@ -247,8 +280,8 @@ public class MusicPageFragment extends DialogFragment {
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 randomIndex = mMusicLab.shuffle();
-                mISShuffle=!mISShuffle;
+                randomIndex = mMusicLab.shuffle();
+                mISShuffle = !mISShuffle;
             }
         });
 
@@ -259,8 +292,7 @@ public class MusicPageFragment extends DialogFragment {
         return view;
     }
 
-
-    public  String milliSecondsToTimer(long milliseconds) {
+    public String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";
         String secondsString = "";
 
@@ -303,5 +335,9 @@ public class MusicPageFragment extends DialogFragment {
         mSeekBar.setMax(mMusic.getDurationmusic());
         mCallbacks.onMusicUpdatePage(mMusic);
 
+    }
+
+    public interface Callbacks {
+        void onMusicUpdatePage(Music music);
     }
 }

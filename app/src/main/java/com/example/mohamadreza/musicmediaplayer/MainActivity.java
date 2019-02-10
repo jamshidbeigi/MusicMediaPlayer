@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,11 +17,12 @@ import android.widget.Toast;
 import com.example.mohamadreza.musicmediaplayer.model.Music;
 import com.example.mohamadreza.musicmediaplayer.model.MusicLab;
 
-public class MainActivity extends AppCompatActivity implements  MusicPlayerFragment.Callbacks , MusicPageFragment.Callbacks
-        ,AlbumsMusics.Callbacks,ArtistsMusics.Callbacks {
+public class MainActivity extends AppCompatActivity implements MusicPlayerFragment.Callbacks, MusicPageFragment.Callbacks
+        , AlbumsMusics.Callbacks, ArtistsMusics.Callbacks , FavoritFragment.Callbacks {
 
 
-    private static final String DIALOG_TAG = "DialogDate";
+    private static final String DIALOG_TAG_PLAYER = "player_page";
+    private static final String DIALOG_TAG_FAVORIT = "favorit_list";
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private ImageView mPlay;
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         mViewPager = findViewById(R.id.view_pager);
         mPlay = findViewById(R.id.play);
         mNext = findViewById(R.id.next);
-        mTitle =findViewById(R.id.bar_title);
+        mTitle = findViewById(R.id.bar_title);
         mPrevious = findViewById(R.id.previous);
 
         LinearLayout layout = findViewById(R.id.controller_linear);
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
                     MusicPageFragment musicPageFragment = MusicPageFragment.newInstance(mMusic.getId());
                     musicPageFragment.setTargetFragment(mMusicPlayerFragment,
                             1);
-                    musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG);
+                    musicPageFragment.show(getSupportFragmentManager(), DIALOG_TAG_PLAYER);
                 }
             }
         });
@@ -159,5 +162,30 @@ public class MainActivity extends AppCompatActivity implements  MusicPlayerFragm
         mMusic = music;
         mTitle.setText(mMusic.getTitle());
         mPlay.setImageResource(R.drawable.ic_pause);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.favorit_list:
+                FavoritFragment favoritFragment = FavoritFragment.newInstance();
+                favoritFragment.setTargetFragment(mMusicPlayerFragment,
+                        2);
+                favoritFragment.show(getSupportFragmentManager(), DIALOG_TAG_FAVORIT);
+
+
+                default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

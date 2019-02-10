@@ -28,21 +28,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class ArtistsMusics extends DialogFragment {
 
-    private static final String ARTIST_NAME="artist_name";
+    private static final String ARTIST_NAME = "artist_name";
+    private String mArtistName;
     private MusicLab mMusicLab;
     private RecyclerView mRecyclerView;
     private MusicAdapter mMusicAdapter;
-    private String mArtistName;
     private Callbacks mCallbacks;
 
-    public interface Callbacks{
-        void onMusicUpdate(Music music);
+    public ArtistsMusics() {
+        // Required empty public constructor
     }
 
     public static ArtistsMusics newInstance(String artistName) {
         ArtistsMusics fragment = new ArtistsMusics();
         Bundle args = new Bundle();
-        args.putString(ARTIST_NAME,artistName);
+        args.putString(ARTIST_NAME, artistName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,11 +70,6 @@ public class ArtistsMusics extends DialogFragment {
         }
     }
 
-
-    public ArtistsMusics() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +82,7 @@ public class ArtistsMusics extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =inflater.inflate(R.layout.recycler_view, container, false);
+        View view = inflater.inflate(R.layout.recycler_view, container, false);
 
         mRecyclerView = view.findViewById(R.id.album_musics_list);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
@@ -98,6 +93,9 @@ public class ArtistsMusics extends DialogFragment {
         return view;
     }
 
+    public interface Callbacks {
+        void onMusicUpdate(Music music);
+    }
 
     public class MusicHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
 
@@ -151,11 +149,11 @@ public class ArtistsMusics extends DialogFragment {
 
         private List<Music> mSounds;
 
-        public void setSounds(List<Music> sounds) {
+        public MusicAdapter(List<Music> sounds) {
             mSounds = sounds;
         }
 
-        public MusicAdapter(List<Music> sounds) {
+        public void setSounds(List<Music> sounds) {
             mSounds = sounds;
         }
 
